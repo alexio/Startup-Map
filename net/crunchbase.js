@@ -37,14 +37,18 @@ mongoclient.connect('mongodb://127.0.0.1:27017/companies', function(err,db){
 		}
 
 		var closeDB = function closeDB(){
+			console.log("Closing");
 			coll.find().toArray(function(err, results){
+				console.log("Print and CLose");
 				console.dir(results);
 				db.close();
 			});
 		}
-
+		
 		theQueuer.on('close', closeDB);
 		theQueuer.on('insert', addToDB);
+	//			db.close();
+		console.log("db closed");
 	});
 });
 
@@ -56,11 +60,13 @@ var readJSONFile = function readJSONFile(){
 		if (err) throw err;
 		try{
 			var data = JSON.parse(str);
-			theQueuer.on('insert', data);
+			//	theQueuer.on('insert', data);
 		}
 		catch(e){
 			console.error('Parsing error in read', e);
+			console.log("Ehy?");
 		}
+		console.log('hangs');
 	});
 	console.log("end of read");
 }
@@ -115,6 +121,7 @@ function getCompanies(ops){
 					console.log("Writing slice: " + i + " len: " + slice.length);
 					theQueuer.emit('write', slice);
 				}
+				console.log("After slices");
 			}
 			catch(e){
 				console.error("Parsing error in res: ", e);
@@ -132,10 +139,13 @@ function getCompanies(ops){
 fs.exists(clist_path, function(exists){
 	if(exists){
 		theQueuer.emit('read');
+		console.log("Read emit");
 	}
 	else{
 		getCompanies(options);
 		console.log("THE VOID");
 	}
 	theQueuer.emit('close');
+	console.log("Final");
+	//	theQueuer.emit('close');
 });
