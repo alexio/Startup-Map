@@ -1,5 +1,5 @@
 var http = require('http'),
-    mongoclient = require('mongodb').MongoClient,
+    mongoose = require('mongoose'),
     format = require('util').format,
     qs = require('querystring'),
     config = require('../util/config'),
@@ -14,43 +14,15 @@ var options = {
 	path:'/v/1/companies.js?'+qs.stringify({api_key:api_key})
 }
 
-mongoclient.connect('mongodb://127.0.0.1:27017/companies', function(err,db){
-	
-	if(err)	throw err;
-	
-	db.createCollection('company_shallow', function(err, coll){
+mongoose.connect(config.db());
+var db = mongoose.connection;
 
-		/*Takes JSON*/
-		var addToDB = function addToDB(data){
-
-			for(var i = 0; i < companies.length; i ++){
-				coll.insert(data, function(err,docs){
-
-					if (err) throw err;
-					coll.count(function(err,count){
-
-						if (err) throw err;
-						console.log("Count: " + format("count = %s",count));
-					});
-				});
-			}
-		}
-
-		var closeDB = function closeDB(){
-			console.log("Closing");
-			coll.find().toArray(function(err, results){
-				console.log("Print and CLose");
-				console.dir(results);
-				db.close();
-			});
-		}
-		
-		theQueuer.on('close', closeDB);
-		theQueuer.on('insert', addToDB);
-	//			db.close();
-		console.log("db closed");
-	});
+db.on('error', console.error.bind(console,'DB Connection Problem'));
+db.on('connected', function(){
+	console.log("Yes Connect");
 });
+db.close();
+
 
 var clist_path = '../db/company_list.json';
 
@@ -139,13 +111,9 @@ function getCompanies(ops){
 fs.exists(clist_path, function(exists){
 	if(exists){
 		theQueuer.emit('read');
-		console.log("Read emit");
 	}
 	else{
 		getCompanies(options);
-		console.log("THE VOID");
 	}
-	theQueuer.emit('close');
 	console.log("Final");
-	//	theQueuer.emit('close');
 });
