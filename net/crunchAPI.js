@@ -49,7 +49,7 @@ function makeApiCall(type, name, callback){
                                         permalink:'googley',
                                         category_code:'web'
                                 }];*/
-
+				console.log("Len: " + data.length);
 				callback(data);
                         }
                         catch(e){

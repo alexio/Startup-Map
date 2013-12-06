@@ -36,13 +36,14 @@ var insertDB = function insertDB(data){
 	
 	for(var i = 0, len = data.length; i < len; i += 1){
 		console.log("Inserting : " + i);
+		console.log("Data: " + JSON.stringify(data[i]));
 		try{
 			console.log("In try");
 			console.log(data[i]);
 			var company = new Company(data);
 			company.save(function(err){
 				if (err) throw err;
-				console.log("Inserted " + i);
+				console.log("Inserted");
 			});
 		}
 		catch(e){
@@ -62,7 +63,7 @@ theQueuer.on('insertdb', insertDB);
 
 var crunchdata = function crunchData(data){
 	console.log('Callback...');
-	theQueuer.emit('insertdb', data.slice(0, data.length - data.length +1));
+	theQueuer.emit('insertdb', data.slice(0, data.length - 100));
 }
 
 crunchAPI.Call('list', '', crunchdata);
