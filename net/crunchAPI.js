@@ -2,35 +2,23 @@ var http = require('http'),
     qs = require('querystring'),
     config = require('../util/config');
 
-var host = 'api.crunchbase.com';
-
-function entity_list(){
-	return '/v/1/companies.js?'+qs.stringify({api_key:config.api_key()}); 
+function entity_list(entity,callback){
+	var path =  '/v/1/'+entity+'.js?'+qs.stringify({api_key:config.api_key()}); 
+	var data = apiCall(path, callback); 
 }
 
-function entity_info(name, entity){
-	return '/v/1/'+company+'/'+name+'.js?';
+function entity_info(name, entity, callback){
+	var path = '/v/1/'+entity+'/'+name+'.js?'+qs.stringify({api_key:config.api_key()});
+	var data = apiCall(path, callback);
 }
 
-function makeApiCall(type, name, callback){
-
+function apiCall(url, callback){
+	console.log("url: " + url);
 	var options = {
                 hostname: 'api.crunchbase.com',
-                path:''
+                path:url
         }
 
-	switch(type){
-		case 'list':
-			options.path = entity_list();
-			break;
-		case 'info':
-			//passing in 'company'
-			options.path = entity_info(name,'company');
-			break;
-		default:
-			return;
-	}
-	
         var req = http.request(options, function(res) {
                 console.log('STATUS: ' + res.statusCode);
                 console.log('HEADERS: ' + JSON.stringify(res.headers));
@@ -40,20 +28,15 @@ function makeApiCall(type, name, callback){
                         body+=chunk;
                 });
                 res.on('end', function(){
-
                         try{
-                                /*Very large object, send in bits*/
-                                var data = JSON.parse(body);
-                                /*var data = [{
-                                        name:'Google',
-                                        permalink:'googley',
-                                        category_code:'web'
-                                }];*/
+				/*Very large object, send in bits*/              
+				console.log("Parsei " + body);
+				var data = JSON.parse(body);
 				console.log("Len: " + data.length);
 				callback(data);
-                        }
+			}
                         catch(e){
-				callback('error');
+				return 'error';
                                 console.error("Parsing error in res: ", e);
                         }
                 });
@@ -70,8 +53,12 @@ function makeApiCall(type, name, callback){
 }
 
 module.exports = {
+	
+	getList: function(entity, callback){
+		return entity_list(entity, callback);
+	},
 
-	Call: function(type,name,callback){
-		return makeApiCall(type,name,callback);
+	getInfo: function(name, entity, callback){
+		return entity_info(name, entity, callback);
 	}
 }
