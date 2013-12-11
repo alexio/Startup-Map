@@ -1,6 +1,7 @@
 /*
  * Will collect specific information on the companies retrieved by crunchList_worker.js
- */
+ *
+*/
 
 var mongoose = require('mongoose'),
     config = require('../util/config'),
