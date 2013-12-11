@@ -71,7 +71,7 @@ var addInfoToDB = function addInfoToDB(data){
 
 	mongoose.connect(config.db());
 }
-
+//comment
 
 db.on('open', function(err){
 	if (err) {
