@@ -13,7 +13,7 @@ function entity_info(name, entity, callback){
 }
 
 function apiCall(url, callback){
-	console.log("url: " + url);
+	//console.log("url: " + url);
 	var options = {
                 hostname: 'api.crunchbase.com',
                 path:url
@@ -30,7 +30,7 @@ function apiCall(url, callback){
                 res.on('end', function(){
                         try{
 				/*Very large object, send in bits*/              
-				console.log("Parsei " + body);
+				//console.log("Parsei " + body);
 				var data = JSON.parse(body);
 				console.log("Len: " + data.length);
 				callback(data);
