@@ -4,7 +4,8 @@
 
  var express = require('express'),
      app = express(),
-     CompanyList = require('./db/schema').List;
+     mongoose = require('mongoose'),
+     CompanyList = require('./db/schema').Company;
 
 app.get('/hello.txt', function(req, res){
 	var body = 'Hello World';
@@ -14,11 +15,22 @@ app.get('/hello.txt', function(req, res){
 app.get('/company_list', function(req,res){
 	
 	var results = {};
-	CompanyList.find({}, function(err, result){
+	/*	CompanyList.find({name:'google'}, function(err, result){
+		
+		if(err) throw err;
+		
+		console.log("Results: " + JSON.stringify(result));
 		results = result;
+		res.send(JSON.stringify(results));
+	});*/
+
+	var q = CompanyList.find().limit(20);
+	q.find(function(err, posts){
+		if(err)throw err;
+		res.send(JSON.stringify(posts));
 	});
 
-	res.send(JSON.stringify(results));
+	console.log("Comp list");
 });
 
 app.listen(8787);
