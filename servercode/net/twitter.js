@@ -20,7 +20,7 @@ function timeline(screen_name, callback){
 
 	getBearerToken(function(data){
                     
-                var path = '/1.1/statuses/user_timeline.json?screen_name=' + screen_name; // + "&count=2"; 
+                var path = '/1.1/statuses/user_timeline.json?screen_name=' + screen_name + '&count=10'; 
                 var auth = "Bearer " + data.access_token;
                 makeRequest(getOps(path,'GET'), auth, '', function(data){
 			var theChosen = [];
