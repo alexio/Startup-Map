@@ -1,21 +1,35 @@
-_api_key = 'jph7r5txz8vcshq3anwqu5w5';
-_api_key_new = '8jsmuem8jxqngc7jtqnb6wus';
+_crunchbase_apikey = '8jsmuem8jxqngc7jtqnb6wus';
+_twitter_consumerkey = 'bAX6SAXBUuBTPTA706XvQ';
+_twitter_secretkey = 'mPCnWnbQ0NN6BrAW8co9e8iCqcAszdWYK6MIkXpUg';
 _db = 'Startup_Map';
 
-function api_key(){
-	return _api_key_new; 
+function crunchbase_apikey(){
+	return _crunchbase_apikey;
 }
 
 function db(){
-	return  'mongodb://127.0.0.1:27017/'+_db;
+        return  'mongodb://127.0.0.1:27017/'+_db;
+}
+
+function twitterKeys(){
+
+	var keys = {
+		consumer: _twitter_consumerkey,
+		secret: _twitter_secretkey
+	};
+
+	return keys;
 }
 
 module.exports = {
-	
-	api_key: function(){
-		return api_key();
+	crunch_key: function(){
+		return _crunchbase_apikey();
 	},
-
+		
+	twitter_keys: function(){
+		return twitterKeys();
+	},
+			
 	db: function(){
 		return db();
 	}

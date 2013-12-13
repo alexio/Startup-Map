@@ -5,7 +5,9 @@
  var express = require('express'),
      app = express(),
      mongoose = require('mongoose'),
-     CompanyList = require('./db/schema').List;
+     CompanyList = require('./db/schema').List,
+     Company = require('./db/schema').Company,
+     twitterAPI = require('.net/twitter');
 
 app.get('/hello.txt', function(req, res){
 	var body = 'Hello World';
@@ -23,7 +25,7 @@ app.get('/cl', function(req,res){
 		res.send(JSON.stringify(results));
 	});*/
 
-	var q = CompanyList.find().limit(100);
+	var q = Company.find();
 	q.find(function(err, posts){
 		if(err)throw err;
 		res.send(JSON.stringify(posts));
@@ -54,14 +56,17 @@ app.get('/t', function(req, res){
 	req.on('data', function(chunk){
 		body+=chunk;
 	});
-
+	
 	req.on('end', function(err){
-
+		
 		if(err) throw err;
 	
-		console.log("Req body: " + body);
+		console.log("/t body: " + body);
+		twitterAPI.timeline("google", function(data){
+			res.send(JSON.stringify(data));
+		});
 	});
-}):
+});
 
 /*
  * News Call
@@ -80,7 +85,7 @@ app.get('/n', function(req, res){
 		console.log("Req body: " + body);
 	});
 
-}):
+});
 
-app.listen(8787);
+app.listen(443);
 console.log('Listening on port 8787');
