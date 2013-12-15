@@ -18,7 +18,8 @@ function entity_info(name, entity, callback){
 }
 
 function getArticles(name,callback){
-
+	console.log("Get Stuuf tccc");
+	name = name.toLowerCase();
 	var path = '/v/1/company/'+name+'.js?'+qs.stringify({api_key:config.crunch_key()});
 	apiCall(path, function(data){
 		console.log("Funding");
@@ -28,8 +29,8 @@ function getArticles(name,callback){
 			if(article.source_url != '' && article.source_description != ''){
 				console.log("Push");
 				var entry = {
-					desc: article.source_description,
-					link: article.source_url
+					source: article.source_description,
+					url: article.source_url
 				}
 				articles.push(entry);
 			}
@@ -39,7 +40,7 @@ function getArticles(name,callback){
 }
 
 function apiCall(url, callback){
-	//console.log("url: " + url);
+	console.log("url: " + url);
 	var options = {
                 hostname: 'api.crunchbase.com',
                 path:url
@@ -54,7 +55,7 @@ function apiCall(url, callback){
                         body+=chunk;
                 });
                 res.on('end', function(){
-                        //console.log("Body: " + body);
+                        console.log("TC NEWS Body: " + body);
 			try{
 				/*Very large object, send in bits*/              
 				//console.log("Parsei " + body);

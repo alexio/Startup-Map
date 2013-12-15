@@ -17,7 +17,8 @@ function getOps(path, method){
 
 /*Get list of tweets from specified user*/
 function timeline(screen_name, callback){
-
+	
+	console.log('Got timeline');
 	getBearerToken(function(data){
                     
                 var path = '/1.1/statuses/user_timeline.json?screen_name=' + screen_name + '&count=10'; 
@@ -26,9 +27,33 @@ function timeline(screen_name, callback){
 			var theChosen = [];
 			
 			data.forEach(function(tweet){
-				var entry = {
-					tweet:tweet.text
+				
+				var text = '';
+				if(tweet.text !== undefined){
+					text = tweet.text;
 				}
+
+				var date = '';
+				if(tweet.created_at !== undefined){
+					date = tweet.created_at;
+				}
+
+				var author = '';
+				if(tweet.user !== undefined && tweet.user.name != undefined){
+					author = tweet.user.name;
+				}
+
+				var img = '';
+				if(tweet.user !== undefined && tweet.user.profile_image_url){
+					img = tweet.user.profile_image_url;
+				}
+				
+				var entry = {
+					tweet:text,
+					date:date,
+					author:author,
+					profile_img:img
+				};
 				theChosen.push(entry);
 			});
 
@@ -53,7 +78,8 @@ function search(query, callback){
 				}
 				theChosen.push(entry);
 			});
-
+			console.log("Tweet result: ");
+			console.log(theChosen);
 			callback(theChosen);	
 		});
 	});
@@ -73,9 +99,9 @@ function getBearerToken(callback){
 function makeRequest(options, auth, body,callback){	
 	
         var req = https.request(options, function(res) {
-
+		
                 console.log('STATUS: ' + res.statusCode);
-                console.log('HEADERS: ' + JSON.stringify(res.headers));
+                //console.log('HEADERS: ' + JSON.stringify(res.headers));
 		
 		var body = '';
                 res.setEncoding('utf8');
@@ -83,16 +109,14 @@ function makeRequest(options, auth, body,callback){
                         body+=chunk;
                 });
                 res.on('end', function(){
-                        try{
+			try{
 				var data = JSON.parse(body);
-				console.log("Data: ");
-				console.log(data);
 				callback(data);
 			}
                         catch(e){
-				return 'error';
                                 console.error("Parsing error in res: ", e);
-                        }
+                       		return 'error';
+			}
                 });
 		res.on('error', function(e){
 			console.log('Error in response');
@@ -109,6 +133,7 @@ function makeRequest(options, auth, body,callback){
         });
 	
 	req.end();
+	console.log(options.path);
 }
 
 module.exports = {

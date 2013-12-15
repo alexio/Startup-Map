@@ -17,7 +17,7 @@ function initialize() {
     };
     markers = [];
     map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
-    var param = '/mappedinUSA/crunch.php?url=198.211.114.151:443/cl';
+    var param = '/mappedinUSA/crunch.php?url=198.211.114.151:8989/cl';
     console.log(param);
     console.log('before');
     $.ajax({
@@ -44,20 +44,36 @@ function initialize() {
 			      google.maps.event.addListener(marker,'click',function(){
 				infowindow.setContent(item.homepage);
 				infowindow.open(map,marker);
+				$("#twitter_feed").addClass('active');
 				var send = {
 				  query: marker.twitter
 				};
 				$.ajax({
-				  url: '198.211.114.151:443/t',
-				  type: 'GET',
-				  data: send,
-				  dataType: 'json',
-				  success: function(res) {
-				    alert('success');
-				  },
-				  error: function(){
-				    alert('error');
-				  }
+					url: 'http://198.211.114.151:8989/t',
+				 	type: 'GET',
+				  	data: send,
+				  	header: {
+						'Content-Type':'application/json'
+					},
+					success: function(res) {
+				  		var data = JSON.parse(res);
+						console.log(data);
+						$("#twitter_feed").html('');
+						$("#news_feed").html('');
+						data.twitter.forEach(function(item) {
+							loadTweets(item);
+						});
+						data.nyt_news.forEach(function(article){
+							loadNews(article);		
+						});
+						data.tc_news.forEach(function(article){
+							loadNews(article);
+						});
+						
+					},
+				  	error: function(){
+				   	 	alert('error');
+				 	}
 				});
 			      });
 			      google.maps.event.addListener(map, 'click', function() {
@@ -83,6 +99,35 @@ function initialize() {
     });
 }
 
+function loadTweets(item){
+	var date = new Date(item.date);
+	var entry = "<div class='item'>";
+	entry+="<i class='map marker icon'></i>";
+	entry+="<div class='content'>";
+	entry+="<a class='header'>Date: " + date.toLocaleString() + "<br/> Author: "+ item.author + "</a>";
+	entry+="<div class='description'>"+item.tweet+"</div>";
+	entry+="</div></div>";	
+	$("#twitter_feed").append(entry);
+}
+
+function loadNews(item){
+	console.log(item);
+	var date = '';
+	if(item.date !== undefined){
+		date = new Date(item.date);
+		date = date.toLocaleString();
+		date = "Date: " + date + "<br/>";
+	}
+	var entry = "<div class='item'>";
+	entry+="<i class='map marker icon'></i>";
+	entry+="<div class='content'>";
+	entry+="<a class='header'>" + date + "<a href='"+item.url +"'>"+ item.source + "</a></a>";
+	if(item.snippet !== undefined){
+		entry+="<div class='description'>"+item.snippet+"</div>";
+	}
+	entry+="</div></div>";				
+	$("#news_feed").append(entry);
+}
 //setTimeout(function() {
 //    markerCluster = new MarkerClusterer(map,markers, mcoptions);
 //    markerCluster.addMarkers(markers,true);

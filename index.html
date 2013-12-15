@@ -4,22 +4,42 @@
         <link rel="stylesheet" type="text/css" href="./css/semantic.css">
         <link rel="stylesheet" type="text/css" href="./css/feed.css">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script src="./js/semantic.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+				console.log("Done loading");	
+				$('#CTab').click('click', function(){
+					console.log("ctab");
+					$('#twitter_feed').removeClass('active');
+					$('#TTab').removeClass('active');
+					$('#news_feed').addClass('active');
+					$('#CTab').addClass('active');
+				});
+
+				$('#TTab').click('click', function(){
+					console.log("tab");
+					$('#news_feed').removeClass('active');
+					$('#CTab').removeClass('active');
+					$('#twitter_feed').addClass('active');
+					$('#TTab').addClass('active');
+				});
+		});
+	</script>	
+	<script src="./js/semantic.js"></script>
         <script src="./js/feed.js"></script>
         <script src="./js/gmap.js"></script>
         <script src="./js/data.json" type="application/json"></script>
         <script src="./js/markerclusterer.js" type="text/javascript"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
         <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
-    </head>
+</head>
     <body id="feed" ng-controller="map-controller">
         <div class="ui celled grid">
             <div class="five wide middle column">
                 <div class="ui tabular filter menu">
-                    <a class="item" data-tab="companynews">Company News</a>
-                    <a class="active item" data-tab="twitter">Twitter</a>
+                    <a id="CTab" class="item" data-tab="companynews">Company News</a>
+                    <a id="TTab" class="active item" data-tab="twitter">Twitter</a>
                 </div>
-                <div class="ui divided inbox selection list active tab" data-tab="companynews">
+                <div id='news_feed' class="ui divided inbox selection list tab" data-tab="companynews">
                     <a class="item">
                         <div class="left floated ui star rating"><i class="icon"></i></div>
                         <div class="right floated date">Sep 14, 2013</div>
@@ -29,12 +49,12 @@
 			<div id="sup"></div>
 		    </a>
                 </div>
-                <div class="ui divided inbox selection list tab" data-tab="twitter">
-                    <a class="item">
+                <div id='twitter_feed' class="ui divided inbox selection list tab" data-tab="twitter">
+                   <!-- <a class="item">
                         <div class="left floated ui star rating"><i class="icon"></i></div>
                         <div class="right floated date">Sep 14, 2013</div>
                         <div class="description">Item 2</div>
-                    </a>
+		</a>-->
                 </div>
 
                 <div class="ui divider"></div>

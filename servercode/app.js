@@ -17,7 +17,7 @@ app.use(express.bodyParser());
 // Enables CORS
 app.all('*', function(req, res, next) {
 	if(!req.get('Origin')) return next();
-	
+	console.log("Origin");	
 	res.header('Access-Control-Allow-Origin', 'http://198.211.114.151');
 	res.header('Access-Control-Allow-Methods', 'GET,POST');
 	res.header('Access-Control-Allow-Headers', 'Content-Type, X-Requested-With');
@@ -69,26 +69,42 @@ app.get('/ci', function(req,res){
  */
 app.get('/t', function(req, res){
 	console.log("q: " + req.query.query);
-	var body = '';
-	req.on('data', function(chunk){
-		body+=chunk;
-	});
 	
-	req.on('end', function(err){
-		
-		if(err) throw err;
-	
-		console.log("/t body: " + body);
-		try{
-			var query = JSON.parse(body);
-			console.log(query);
-			twitterAPI.timeline(body.query, function(data){
-				res.send(JSON.stringify(data));
-			});
-		}catch(e){
-			res.send({error:'Invalid json (get better). But error could be something else'});
+	if(req.query.query !== undefined){
+		var data_response = {
+			twitter: [],
+			nyt_news: [],
+			tc_news: []
 		}
-	});
+		var count = 0;
+		twitterAPI.timeline(req.query.query, function(data){
+			console.log("Sending t back: " + count);
+			data_response.twitter = data;
+			count++;
+			if(count == 3){
+				res.send(JSON.stringify(data_response));
+			}
+		});
+		nytAPI.articles(req.query.query, function(data){
+			console.log("Sending ny back: " + count);
+			data_response.nyt_news = data;
+			count++;
+			if(count == 3){
+				res.send(JSON.stringify(data_response));
+			}
+		});
+		news.articles(req.query.query, function(data){
+			console.log("Sending tc back: " + count);
+			data_response.tc_news = data;
+			count++;
+			if(count == 3){
+				res.send(JSON.stringify(data_response));
+			}
+		});
+	}
+	else{
+		res.send({error:'Invalid query'});
+	}
 });
 
 /*
@@ -96,53 +112,27 @@ app.get('/t', function(req, res){
  * */
 app.get('/n', function(req, res){
 
-	var body = '';
-	req.on('data', function(chunk){
-		body+=chunk;
-	});
-
-	req.on('end', function(err){
-
-		if(err) throw err;
-	
-		console.log("Req body: " + body);
-
-		try{
-			var query = JSON.parse(body);
-			console.log('JSON: ' + query);
-			nytAPI.articles(query, function(data){
-				res.send(JSON.stringify(data));
-			});
-		}catch(e){
-			res.send({error:'Invalid json or something else'});
-		}
-	});
+	if(req.query.query !== undefined){
+		nytAPI.articles(req.query.query, function(data){
+			res.send(JSON.stringify(data));
+		});
+	}
+	else{
+		res.send({error:'Invalid json or something else'});
+	}
 });
 
 app.get('/tc', function(req, res){
 
-	var body = '';
-	req.on('data', function(chunk){
-		body+=chunk;
-	});
-
-	req.on('end',function(err){
-			
-		if(err) throw err;
-
-		console.log("techc body: " + body);
-		
-		try{
-			var query = JSON.parse(body);
-			news.articles(query, function(data){
-				res.send(JSON.stringify(data));
-			});
-
-		}catch(e){
-			res.send({error:'Invalid JSON or something else'});
-		}
-	});
+	if(req.query.query !== undefined){
+		news.articles(req.query.query, function(data){
+			res.send(JSON.stringify(data));
+		});
+	}
+	else{
+		res.send({error:'Invalid JSON or something else'});
+	}
 });
 
-app.listen(443);
+app.listen(8989);
 console.log('Listening on port 8787');
