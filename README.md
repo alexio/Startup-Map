@@ -1,1 +1,1 @@
-Web application to provide a interact visualization of startups near you. 
+Web application to provide an interact visualization of startups near you. 
