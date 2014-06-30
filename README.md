@@ -1,4 +1,1 @@
-ITI-332
-=======
-
-Final Project for Advanced Web Design
+Web application to provide a interact visualization of startups near you. 
